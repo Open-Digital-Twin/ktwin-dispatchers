@@ -22,69 +22,46 @@ func main() {
 	publisherTopic := config.GetEnv("publisherTopic")
 	serviceName := config.GetEnv("serviceName")
 
-	amqpSubscriberClient := amqp.NewAMQPClient()
-	err := amqpSubscriberClient.Connect(serverUrl, serverPort, protocol, username, password)
-	defer amqpSubscriberClient.Close()
+	dispatcherConfig := amqp.DispatcherConfig{
+		Protocol:        protocol,
+		ServerUrl:       serverUrl,
+		ServerPort:      serverPort,
+		Username:        username,
+		Password:        password,
+		SubscriberQueue: subscriberQueue,
+		PublisherTopic:  publisherTopic,
+		ServiceName:     serviceName,
+		ExchangeType:    "headers",
+	}
+
+	dispatcher := amqp.NewDispatcher(dispatcherConfig)
+
+	err := dispatcher.Start()
 
 	if err != nil {
 		fmt.Println(err)
-		panic("Error while connecting")
+		panic("Error when starting dispatcher")
 	}
 
-	amqpPublisherClient := amqp.NewAMQPClient()
-	err = amqpPublisherClient.Connect(serverUrl, serverPort, protocol, username, password)
-	defer amqpPublisherClient.Close()
-
-	if err != nil {
-		fmt.Println(err)
-		panic("Error while connecting")
-	}
-
-	err = amqpPublisherClient.DeclareExchange(publisherTopic, "headers", amqp.ExchangeOptions{
-		Durable:    true,
-		AutoDelete: false,
-		Internal:   false,
-		NoWait:     false,
-	})
-
-	if err != nil {
-		fmt.Println(err)
-		panic("Error while connecting")
-	}
-
-	err = amqpSubscriberClient.DeclareQueue(subscriberQueue, amqp.QueueOptions{
-		Durable:    true,
-		AutoDelete: false,
-		Exclusive:  false,
-		NoWait:     false,
-	})
-
-	if err != nil {
-		panic("Error while connecting")
-	}
+	defer dispatcher.CloseDispatcher()
 
 	forever := make(chan bool)
 
-	amqpSubscriberClient.Consume(subscriberQueue, serviceName, amqp.ConsumerClientOptions{
-		AutoAck:   true,
-		Exclusive: false,
-		NoLocal:   false,
-		NoWait:    false,
-	}, func(body []byte, headers map[string]interface{}, routingKey string) {
-		fmt.Printf("Message received: %s\n", string(body))
-		fmt.Printf("Headers received: %s\n", headers)
-		fmt.Printf("Routing Key received: %s\n", routingKey)
+	dispatcher.Listen(func(params amqp.DispatcherCallbackParams) {
+		fmt.Printf("Message received: %s\n", string(params.Body))
+		fmt.Printf("Headers received: %s\n", params.Headers)
+		fmt.Printf("Routing Key received: %s\n", params.RoutingKey)
 
-		headers = make(map[string]interface{}, 1)
-		headers["type"] = routingKey
+		headers := make(map[string]interface{}, 1)
+		headers["type"] = params.RoutingKey
 
 		message := amqp.Message{
 			Headers:     headers,
 			ContentType: "application/json",
-			Body:        body,
+			Body:        params.Body,
 		}
 
-		err := amqpPublisherClient.Publish(ctx, message, publisherTopic, "", amqp.PublisherClientOptions{
+		err := params.PublisherClient.Publish(ctx, message, publisherTopic, "", amqp.PublisherClientOptions{
 			Mandatory: false,
 			Immediate: false,
 		})
