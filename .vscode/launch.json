@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Cloud Event Dispatcher",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceRoot}/cloud-event-dispatcher",
+            "env": {
+              "APP_ENV": "local"
+            }
+        },
+        {
+            "name": "Run MQTT Dispatcher",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceRoot}/mqtt-dispatcher",
+            "env": {
+            "APP_ENV": "local"
+            }
+        }
+    ]
+  }
+  
