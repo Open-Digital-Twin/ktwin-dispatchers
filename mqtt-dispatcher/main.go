@@ -48,10 +48,7 @@ func main() {
 	forever := make(chan bool)
 
 	dispatcher.Listen(func(params amqp.DispatcherCallbackParams) {
-		fmt.Printf("Message received: %s\n", string(params.Body))
-		fmt.Printf("Headers received: %s\n", params.Headers)
-		fmt.Printf("Routing Key received: %s\n", params.RoutingKey)
-
+		// Convert the routing key to type header used by Cloud Events header exchange
 		headers := make(map[string]interface{}, 1)
 		headers["type"] = params.RoutingKey
 
