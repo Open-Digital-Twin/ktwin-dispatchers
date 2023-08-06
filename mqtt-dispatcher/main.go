@@ -54,7 +54,7 @@ func main() {
 		// Convert the routing key to type header used by Cloud Events header exchange
 		headers := make(map[string]interface{}, 1)
 
-		headerType, headerSource, err := splitRoutingKeyCloudEvents(params.RoutingKey)
+		headerType, headerSource, err := splitRoutingKeyInCloudEvents(params.RoutingKey)
 
 		if err == nil {
 			headers["id"] = uuid.NewString()
@@ -89,7 +89,7 @@ func main() {
 // Split the routing key (e.g. MQTT topic) into CloudEvent headers
 // RoutingKey format: ktwin.real.twin-interface.twin-instance
 // Return type, source cloud events
-func splitRoutingKeyCloudEvents(routingKey string) (string, string, error) {
+func splitRoutingKeyInCloudEvents(routingKey string) (string, string, error) {
 	splitRK := strings.Split(routingKey, ".")
 
 	if len(splitRK) < 4 {

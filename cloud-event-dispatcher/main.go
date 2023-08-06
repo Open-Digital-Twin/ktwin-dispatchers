@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"strings"
 
 	amqp "github.com/agwermann/ktwin-dispatcher/pkg/amqp"
 	"github.com/agwermann/ktwin-dispatcher/pkg/config"
@@ -49,22 +51,39 @@ func main() {
 
 	dispatcher.Listen(func(params amqp.DispatcherCallbackParams) {
 		// Convert the `type` header to routing key sent to MQTT topic exchange
-		newRoutingKey := params.Headers["type"].(string)
-		message := amqp.Message{
-			ContentType: "application/json",
-			Body:        params.Body,
+		newRoutingKey, err := buildRoutingKeyWithHeaders(params.Headers)
+
+		if err == nil {
+			message := amqp.Message{
+				ContentType: "application/json",
+				Body:        params.Body,
+			}
+
+			err = params.PublisherClient.Publish(ctx, message, publisherTopic, newRoutingKey, amqp.PublisherClientOptions{
+				Mandatory: false,
+				Immediate: false,
+			})
+
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else {
+			fmt.Printf("Routing key has invalid format: %s %s, dropping the message", params.Headers["type"], params.Headers["source"])
 		}
 
-		err := params.PublisherClient.Publish(ctx, message, publisherTopic, newRoutingKey, amqp.PublisherClientOptions{
-			Mandatory: false,
-			Immediate: false,
-		})
-
-		if err != nil {
-			fmt.Println(err)
-		}
 	})
 
 	<-forever
 
+}
+
+func buildRoutingKeyWithHeaders(headers map[string]interface{}) (string, error) {
+	headerType, isTypeValid := headers["type"].(string)
+	sourceType, isSourceValid := headers["source"].(string)
+
+	if isTypeValid && isSourceValid {
+		return strings.Join([]string{headerType, sourceType}, "."), nil
+	}
+
+	return "", errors.New("Invalid routing key")
 }
