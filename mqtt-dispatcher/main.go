@@ -2,10 +2,13 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"strings"
 
 	amqp "github.com/agwermann/ktwin-dispatcher/pkg/amqp"
 	"github.com/agwermann/ktwin-dispatcher/pkg/config"
+	"github.com/google/uuid"
 )
 
 func main() {
@@ -50,24 +53,51 @@ func main() {
 	dispatcher.Listen(func(params amqp.DispatcherCallbackParams) {
 		// Convert the routing key to type header used by Cloud Events header exchange
 		headers := make(map[string]interface{}, 1)
-		headers["type"] = params.RoutingKey
 
-		message := amqp.Message{
-			Headers:     headers,
-			ContentType: "application/json",
-			Body:        params.Body,
+		headerType, headerSource, err := splitRoutingKeyCloudEvents(params.RoutingKey)
+
+		if err == nil {
+			headers["id"] = uuid.NewString()
+			headers["specversion"] = "1.0"
+			headers["type"] = headerType
+			headers["source"] = headerSource
+
+			message := amqp.Message{
+				Headers:     headers,
+				ContentType: "application/json",
+				Body:        params.Body,
+			}
+
+			err = params.PublisherClient.Publish(ctx, message, publisherTopic, "", amqp.PublisherClientOptions{
+				Mandatory: false,
+				Immediate: false,
+			})
+
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else {
+			fmt.Printf("Invalid routing key format %s, message will be dropped\n", params.RoutingKey)
 		}
 
-		err := params.PublisherClient.Publish(ctx, message, publisherTopic, "", amqp.PublisherClientOptions{
-			Mandatory: false,
-			Immediate: false,
-		})
-
-		if err != nil {
-			fmt.Println(err)
-		}
 	})
 
 	<-forever
 
+}
+
+// Split the routing key (e.g. MQTT topic) into CloudEvent headers
+// RoutingKey format: ktwin.real.twin-interface.twin-instance
+// Return type, source cloud events
+func splitRoutingKeyCloudEvents(routingKey string) (string, string, error) {
+	splitRK := strings.Split(routingKey, ".")
+
+	if len(splitRK) < 4 {
+		return "", "", errors.New("Invalid format")
+	}
+
+	headerType := strings.Join(splitRK[0:3], ".")
+	sourceType := splitRK[3]
+
+	return headerType, sourceType, nil
 }

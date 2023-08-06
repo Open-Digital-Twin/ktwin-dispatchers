@@ -1,6 +1,10 @@
 package amqp
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/agwermann/ktwin-dispatcher/pkg/config"
+)
 
 type Dispatcher interface {
 	Start() error
@@ -99,6 +103,11 @@ func (d *dispatcher) Listen(callback DispatcherCallback) error {
 		NoLocal:   false,
 		NoWait:    false,
 	}, func(body []byte, headers map[string]interface{}, routingKey string) {
+
+		if config.GetEnv("APP_ENV") == "local" {
+			fmt.Printf("Received message: %s %s\n", routingKey, body)
+		}
+
 		params := DispatcherCallbackParams{
 			Body:            body,
 			Headers:         headers,
