@@ -88,6 +88,8 @@ func (d *dispatcher) Start() error {
 		return err
 	}
 
+	fmt.Printf("%s connected to RabbitMQ cluster\n", d.config.ServiceName)
+
 	return nil
 }
 
