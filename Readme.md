@@ -33,3 +33,10 @@ Build Cloud Event Dispatcher:
 ```sh
 docker run -it --rm --env-file ./cmd/cloud-event-dispatcher/local.env ktwin/cloud-event-dispatcher:0.1
 ```
+
+## Load in Kind Development Environment
+
+```sh
+kind load docker-image ktwin/mqtt-dispatcher:0.1
+kind load docker-image ktwin/cloud-event-dispatcher:0.1
+```
