@@ -37,6 +37,8 @@ docker run -it --rm --env-file ./cmd/cloud-event-dispatcher/local.env ktwin/clou
 ## Load in Kind Development Environment
 
 ```sh
-kind load docker-image ktwin/mqtt-dispatcher:0.1
-kind load docker-image ktwin/cloud-event-dispatcher:0.1
+docker build -t dev.local/ktwin/mqtt-dispatcher:0.1 --build-arg SERVICE_NAME=mqtt-dispatcher .
+docker build -t dev.local/ktwin/cloud-event-dispatcher:0.1 --build-arg SERVICE_NAME=cloud-event-dispatcher .
+kind load docker-image dev.local/ktwin/mqtt-dispatcher:0.1
+kind load docker-image dev.local/ktwin/cloud-event-dispatcher:0.1
 ```
