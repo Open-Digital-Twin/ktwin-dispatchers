@@ -28,9 +28,9 @@ spec:
             - name: serviceName
               value: mqtt-dispatcher-1
             - name: protocol
-              value: ampq
+              value: amqp
             - name: serverUrl
-              value: localhost
+              value: rabbitmq
             - name: serverPort
               value: "5672"
             - name: username

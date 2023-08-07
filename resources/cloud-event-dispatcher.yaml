@@ -27,9 +27,9 @@ spec:
             - name: serviceName
               value: cloud-event-dispatcher-1
             - name: protocol
-              value: ampq
+              value: amqp
             - name: serverUrl
-              value: localhost
+              value: rabbitmq
             - name: serverPort
               value: "5672"
             - name: username
@@ -37,7 +37,7 @@ spec:
             - name: password
               value: rabbitmq
             - name: publisherTopic
-              value: amq.headers
+              value: amq.topic
             - name: subscriberQueue
               value: cloud-event-dispatcher-queue
           resources:

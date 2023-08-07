@@ -25,13 +25,31 @@ docker build -t ktwin/cloud-event-dispatcher:0.1 --build-arg SERVICE_NAME=cloud-
 Run MQTT Dispatcher:
 
 ```sh
-docker run -it --rm --env-file ./cmd/mqtt-dispatcher/local.env ktwin/mqtt-dispatcher:0.1
+docker run -it --rm \
+    -e serviceName=cloud-event-dispatcher-1 \
+    -e protocol=amqp \
+    -e serverUrl=localhost \
+    -e serverPort="5672" \
+    -e username=rabbitmq \
+    -e password=rabbitmq \
+    -e publisherTopic=amq.topic \
+    -e subscriberQueue=cloud-event-dispatcher-queue \
+    ktwin/mqtt-dispatcher:0.1
 ```
 
 Build Cloud Event Dispatcher:
 
 ```sh
-docker run -it --rm --env-file ./cmd/cloud-event-dispatcher/local.env ktwin/cloud-event-dispatcher:0.1
+docker run -it --rm \
+    -e serviceName=mqtt-dispatcher-1 \
+    -e protocol=amqp \
+    -e serverUrl=localhost \
+    -e serverPort="5672" \
+    -e username=rabbitmq \
+    -e password=rabbitmq \
+    -e publisherTopic=amq.headers \
+    -e subscriberQueue=mqtt-dispatcher-queue \
+    ktwin/cloud-event-dispatcher:0.1
 ```
 
 ## Load in Kind Development Environment
