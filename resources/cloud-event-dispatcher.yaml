@@ -24,21 +24,21 @@ spec:
           ports:
             - containerPort: 5672
           env:
-            - name: serviceName
+            - name: SERVICE_NAME
               value: cloud-event-dispatcher-1
-            - name: protocol
+            - name: PROTOCOL
               value: amqp
-            - name: serverUrl
+            - name: SERVER_URL
               value: rabbitmq
-            - name: serverPort
+            - name: SERVER_PORT
               value: "5672"
-            - name: username
+            - name: USERNAME
               value: rabbitmq
-            - name: password
+            - name: PASSWORD
               value: rabbitmq
-            - name: publisherTopic
+            - name: PUBLISHER_TOPIC
               value: amq.topic
-            - name: subscriberQueue
+            - name: SUBSCRIBER_QUEUE
               value: cloud-event-dispatcher-queue
           resources:
             limits:

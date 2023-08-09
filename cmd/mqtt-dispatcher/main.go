@@ -15,15 +15,15 @@ func main() {
 	ctx := context.Background()
 	config.LoadEnv()
 
-	protocol := config.GetEnv("protocol")
-	serverUrl := config.GetEnv("serverUrl")
-	serverPort := config.GetEnvInt("serverPort")
-	username := config.GetEnv("username")
-	password := config.GetEnv("password")
+	protocol := config.GetEnv("PROTOCOL")
+	serverUrl := config.GetEnv("SERVER_URL")
+	serverPort := config.GetEnvInt("SERVER_PORT")
+	username := config.GetEnv("USERNAME")
+	password := config.GetEnv("PASSWORD")
 
-	subscriberQueue := config.GetEnv("subscriberQueue")
-	publisherTopic := config.GetEnv("publisherTopic")
-	serviceName := config.GetEnv("serviceName")
+	subscriberQueue := config.GetEnv("SUBSCRIBER_QUEUE")
+	publisherTopic := config.GetEnv("PUBLISHER_TOPIC")
+	serviceName := config.GetEnv("SERVICE_NAME")
 
 	dispatcherConfig := amqp.DispatcherConfig{
 		Protocol:        protocol,
