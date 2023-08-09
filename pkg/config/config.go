@@ -26,3 +26,12 @@ func GetEnvInt(env string) int {
 	}
 	return intValue
 }
+
+func GetEnvBool(env string) bool {
+	value := os.Getenv(env)
+	intValue, err := strconv.ParseBool(value)
+	if err != nil {
+		fmt.Printf("Environment variable %s is not a valid bool: %s", env, value)
+	}
+	return intValue
+}

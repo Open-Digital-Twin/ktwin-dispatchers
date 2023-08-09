@@ -32,7 +32,9 @@ docker run -it --rm \
     -e SERVER_PORT="5672" \
     -e USERNAME=rabbitmq \
     -e PASSWORD=rabbitmq \
-    -e PUBLISHER_TOPIC=amq.topic \
+    -e DECLARE_EXCHANGE=true \
+    -e DECLARE_QUEUE=true \
+    -e PUBLISHER_EXCHANGE=amq.topic \
     -e SUBSCRIBER_QUEUE=cloud-event-dispatcher-queue \
     ktwin/mqtt-dispatcher:0.1
 ```
@@ -47,7 +49,9 @@ docker run -it --rm \
     -e SERVER_PORT="5672" \
     -e USERNAME=rabbitmq \
     -e PASSWORD=rabbitmq \
-    -e PUBLISHER_TOPIC=amq.headers \
+    -e DECLARE_EXCHANGE=true \
+    -e DECLARE_QUEUE=true \
+    -e PUBLISHER_EXCHANGE=amq.headers \
     -e SUBSCRIBER_QUEUE=mqtt-dispatcher-queue \
     ktwin/cloud-event-dispatcher:0.1
 ```

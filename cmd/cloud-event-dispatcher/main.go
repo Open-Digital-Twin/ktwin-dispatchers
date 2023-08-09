@@ -20,8 +20,10 @@ func main() {
 	username := config.GetEnv("USERNAME")
 	password := config.GetEnv("PASSWORD")
 
+	declareExchange := config.GetEnvBool("DECLARE_EXCHANGE")
+	declareQueue := config.GetEnvBool("DECLARE_QUEUE")
 	subscriberQueue := config.GetEnv("SUBSCRIBER_QUEUE")
-	publisherTopic := config.GetEnv("PUBLISHER_TOPIC")
+	publisherTopic := config.GetEnv("PUBLISHER_EXCHANGE")
 	serviceName := config.GetEnv("SERVICE_NAME")
 
 	dispatcherConfig := amqp.DispatcherConfig{
@@ -30,6 +32,8 @@ func main() {
 		ServerPort:      serverPort,
 		Username:        username,
 		Password:        password,
+		DeclareExchange: declareExchange,
+		DeclareQueue:    declareQueue,
 		SubscriberQueue: subscriberQueue,
 		PublisherTopic:  publisherTopic,
 		ServiceName:     serviceName,

@@ -25,6 +25,8 @@ type DispatcherConfig struct {
 	Username   string
 	Password   string
 
+	DeclareExchange bool
+	DeclareQueue    bool
 	SubscriberQueue string
 	PublisherTopic  string
 	ServiceName     string
@@ -64,28 +66,32 @@ func (d *dispatcher) Start() error {
 		return err
 	}
 
-	err = d.publisherClient.DeclareExchange(d.config.PublisherTopic, d.config.ExchangeType, ExchangeOptions{
-		Durable:    true,
-		AutoDelete: false,
-		Internal:   false,
-		NoWait:     false,
-	})
+	if d.config.DeclareExchange {
+		err = d.publisherClient.DeclareExchange(d.config.PublisherTopic, d.config.ExchangeType, ExchangeOptions{
+			Durable:    true,
+			AutoDelete: false,
+			Internal:   false,
+			NoWait:     false,
+		})
 
-	if err != nil {
-		fmt.Println("Error when declaring publisher exchange")
-		return err
+		if err != nil {
+			fmt.Println("Error when declaring publisher exchange")
+			return err
+		}
 	}
 
-	err = d.subscriberClient.DeclareQueue(d.config.SubscriberQueue, QueueOptions{
-		Durable:    true,
-		AutoDelete: false,
-		Exclusive:  false,
-		NoWait:     false,
-	})
+	if d.config.DeclareQueue {
+		err = d.subscriberClient.DeclareQueue(d.config.SubscriberQueue, QueueOptions{
+			Durable:    true,
+			AutoDelete: false,
+			Exclusive:  false,
+			NoWait:     false,
+		})
 
-	if err != nil {
-		fmt.Println("Error when declaring subscriber queue")
-		return err
+		if err != nil {
+			fmt.Println("Error when declaring subscriber queue")
+			return err
+		}
 	}
 
 	fmt.Printf("%s connected to RabbitMQ cluster\n", d.config.ServiceName)

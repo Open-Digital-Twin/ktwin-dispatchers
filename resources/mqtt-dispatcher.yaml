@@ -37,7 +37,11 @@ spec:
               value: rabbitmq
             - name: PASSWORD
               value: rabbitmq
-            - name: PUBLISHER_TOPIC
+            - name: DECLARE_EXCHANGE
+              value: "false"
+            - name: DECLARE_QUEUE
+              value: "false"
+            - name: PUBLISHER_EXCHANGE
               value: amq.headers
             - name: SUBSCRIBER_QUEUE
               value: mqtt-dispatcher-queue
