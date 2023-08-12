@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	amqp "github.com/agwermann/ktwin-dispatcher/pkg/amqp"
 	"github.com/agwermann/ktwin-dispatcher/pkg/config"
+	cloudEvents "github.com/cloudevents/sdk-go/v2"
 	"github.com/google/uuid"
 )
 
@@ -24,21 +26,21 @@ func main() {
 	declareExchange := config.GetEnvBool("DECLARE_EXCHANGE")
 	declareQueue := config.GetEnvBool("DECLARE_QUEUE")
 	subscriberQueue := config.GetEnv("SUBSCRIBER_QUEUE")
-	publisherTopic := config.GetEnv("PUBLISHER_EXCHANGE")
+	publisherExchange := config.GetEnv("PUBLISHER_EXCHANGE")
 	serviceName := config.GetEnv("SERVICE_NAME")
 
 	dispatcherConfig := amqp.DispatcherConfig{
-		Protocol:        protocol,
-		ServerUrl:       serverUrl,
-		ServerPort:      serverPort,
-		Username:        username,
-		Password:        password,
-		DeclareExchange: declareExchange,
-		DeclareQueue:    declareQueue,
-		SubscriberQueue: subscriberQueue,
-		PublisherTopic:  publisherTopic,
-		ServiceName:     serviceName,
-		ExchangeType:    "headers",
+		Protocol:          protocol,
+		ServerUrl:         serverUrl,
+		ServerPort:        serverPort,
+		Username:          username,
+		Password:          password,
+		DeclareExchange:   declareExchange,
+		DeclareQueue:      declareQueue,
+		SubscriberQueue:   subscriberQueue,
+		PublisherExchange: publisherExchange,
+		ServiceName:       serviceName,
+		ExchangeType:      "headers",
 	}
 
 	dispatcher := amqp.NewDispatcher(dispatcherConfig)
@@ -56,12 +58,15 @@ func main() {
 
 	dispatcher.Listen(func(params amqp.DispatcherCallbackParams) {
 		// Convert the routing key to type header used by Cloud Events header exchange
-		headers := make(map[string]interface{}, 1)
+		headers := make(map[string]interface{}, 10)
 
 		headerType, headerSource, err := splitRoutingKeyInCloudEvents(params.RoutingKey)
 
 		if err == nil {
-			headers["id"] = uuid.NewString()
+			messageId := uuid.NewString()
+			headers["content-type"] = "application/json"
+			headers["id"] = messageId
+			headers["time"] = cloudEvents.Timestamp{Time: time.Now().UTC()}.String()
 			headers["specversion"] = "1.0"
 			headers["type"] = headerType
 			headers["source"] = headerSource
@@ -70,9 +75,10 @@ func main() {
 				Headers:     headers,
 				ContentType: "application/json",
 				Body:        params.Body,
+				MessageId:   messageId,
 			}
 
-			err = params.PublisherClient.Publish(ctx, message, publisherTopic, "", amqp.PublisherClientOptions{
+			err = params.PublisherClient.Publish(ctx, message, publisherExchange, "", amqp.PublisherClientOptions{
 				Mandatory: false,
 				Immediate: false,
 			})

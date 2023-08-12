@@ -23,21 +23,21 @@ func main() {
 	declareExchange := config.GetEnvBool("DECLARE_EXCHANGE")
 	declareQueue := config.GetEnvBool("DECLARE_QUEUE")
 	subscriberQueue := config.GetEnv("SUBSCRIBER_QUEUE")
-	publisherTopic := config.GetEnv("PUBLISHER_EXCHANGE")
+	publisherExchange := config.GetEnv("PUBLISHER_EXCHANGE")
 	serviceName := config.GetEnv("SERVICE_NAME")
 
 	dispatcherConfig := amqp.DispatcherConfig{
-		Protocol:        protocol,
-		ServerUrl:       serverUrl,
-		ServerPort:      serverPort,
-		Username:        username,
-		Password:        password,
-		DeclareExchange: declareExchange,
-		DeclareQueue:    declareQueue,
-		SubscriberQueue: subscriberQueue,
-		PublisherTopic:  publisherTopic,
-		ServiceName:     serviceName,
-		ExchangeType:    "topic",
+		Protocol:          protocol,
+		ServerUrl:         serverUrl,
+		ServerPort:        serverPort,
+		Username:          username,
+		Password:          password,
+		DeclareExchange:   declareExchange,
+		DeclareQueue:      declareQueue,
+		SubscriberQueue:   subscriberQueue,
+		PublisherExchange: publisherExchange,
+		ServiceName:       serviceName,
+		ExchangeType:      "topic",
 	}
 
 	dispatcher := amqp.NewDispatcher(dispatcherConfig)
@@ -63,7 +63,10 @@ func main() {
 				Body:        params.Body,
 			}
 
-			err = params.PublisherClient.Publish(ctx, message, publisherTopic, newRoutingKey, amqp.PublisherClientOptions{
+			fmt.Printf("Routing Key: \n")
+			fmt.Print(newRoutingKey)
+
+			err = params.PublisherClient.Publish(ctx, message, publisherExchange, newRoutingKey, amqp.PublisherClientOptions{
 				Mandatory: false,
 				Immediate: false,
 			})
