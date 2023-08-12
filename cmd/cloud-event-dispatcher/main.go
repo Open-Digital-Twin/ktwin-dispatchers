@@ -63,9 +63,6 @@ func main() {
 				Body:        params.Body,
 			}
 
-			fmt.Printf("Routing Key: \n")
-			fmt.Print(newRoutingKey)
-
 			err = params.PublisherClient.Publish(ctx, message, publisherExchange, newRoutingKey, amqp.PublisherClientOptions{
 				Mandatory: false,
 				Immediate: false,
