@@ -120,6 +120,7 @@ type Message struct {
 	Headers     map[string]interface{}
 	ContentType string
 	Body        []byte
+	MessageId   string
 }
 
 func (c *amqpClient) Publish(ctx context.Context, message Message, exchange string, key string, options PublisherClientOptions) error {

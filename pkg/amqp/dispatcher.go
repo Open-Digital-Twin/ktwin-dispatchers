@@ -25,11 +25,11 @@ type DispatcherConfig struct {
 	Username   string
 	Password   string
 
-	DeclareExchange bool
-	DeclareQueue    bool
-	SubscriberQueue string
-	PublisherTopic  string
-	ServiceName     string
+	DeclareExchange   bool
+	DeclareQueue      bool
+	SubscriberQueue   string
+	PublisherExchange string
+	ServiceName       string
 
 	ExchangeType string
 }
@@ -67,7 +67,7 @@ func (d *dispatcher) Start() error {
 	}
 
 	if d.config.DeclareExchange {
-		err = d.publisherClient.DeclareExchange(d.config.PublisherTopic, d.config.ExchangeType, ExchangeOptions{
+		err = d.publisherClient.DeclareExchange(d.config.PublisherExchange, d.config.ExchangeType, ExchangeOptions{
 			Durable:    true,
 			AutoDelete: false,
 			Internal:   false,
