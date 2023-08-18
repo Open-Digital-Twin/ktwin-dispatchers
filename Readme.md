@@ -11,13 +11,23 @@ The Cloud Event Dispatcher is responsible to forward Cloud Event messages from V
 Build MQTT Dispatcher:
 
 ```sh
-docker build -t ktwin/mqtt-dispatcher:0.1 --build-arg SERVICE_NAME=mqtt-dispatcher .
+docker build -t ghcr.io/ktwins/mqtt-dispatcher:0.1 --build-arg SERVICE_NAME=mqtt-dispatcher .
 ```
 
 Build Cloud Event Dispatcher:
 
 ```sh
-docker build -t ktwin/cloud-event-dispatcher:0.1 --build-arg SERVICE_NAME=cloud-event-dispatcher .
+docker build -t ghcr.io/ktwins/cloud-event-dispatcher:0.1 --build-arg SERVICE_NAME=cloud-event-dispatcher .
+```
+
+## Container Push
+
+```sh
+docker push ghcr.io/ktwins/mqtt-dispatcher:0.1
+```
+
+```sh
+docker push ghcr.io/ktwins/cloud-event-dispatcher:0.1
 ```
 
 ## Run
@@ -64,3 +74,7 @@ docker build -t dev.local/ktwin/cloud-event-dispatcher:0.1 --build-arg SERVICE_N
 kind load docker-image dev.local/ktwin/mqtt-dispatcher:0.1
 kind load docker-image dev.local/ktwin/cloud-event-dispatcher:0.1
 ```
+
+## References
+
+- [Working with Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
