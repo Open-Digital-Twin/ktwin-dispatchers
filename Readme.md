@@ -11,45 +11,28 @@ The Cloud Event Dispatcher is responsible to forward Cloud Event messages from V
 Build MQTT Dispatcher:
 
 ```sh
-docker build -t ghcr.io/ktwins/mqtt-dispatcher:0.1 --build-arg SERVICE_NAME=mqtt-dispatcher .
+docker build -t ghcr.io/open-digital-twin/mqtt-dispatcher:0.1 --build-arg SERVICE_NAME=mqtt-dispatcher .
 ```
 
 Build Cloud Event Dispatcher:
 
 ```sh
-docker build -t ghcr.io/ktwins/cloud-event-dispatcher:0.1 --build-arg SERVICE_NAME=cloud-event-dispatcher .
+docker build -t ghcr.io/open-digital-twin/cloud-event-dispatcher:0.1 --build-arg SERVICE_NAME=cloud-event-dispatcher .
 ```
 
 ## Container Push
 
 ```sh
-docker push ghcr.io/ktwins/mqtt-dispatcher:0.1
+docker push ghcr.io/open-digital-twin/mqtt-dispatcher:0.1
 ```
 
 ```sh
-docker push ghcr.io/ktwins/cloud-event-dispatcher:0.1
+docker push ghcr.io/open-digital-twin/cloud-event-dispatcher:0.1
 ```
 
 ## Run
 
 Run MQTT Dispatcher:
-
-```sh
-docker run -it --rm \
-    -e SERVICE_NAME=cloud-event-dispatcher-1 \
-    -e PROTOCOL=amqp \
-    -e SERVER_URL=localhost \
-    -e SERVER_PORT="5672" \
-    -e USERNAME=rabbitmq \
-    -e PASSWORD=rabbitmq \
-    -e DECLARE_EXCHANGE=true \
-    -e DECLARE_QUEUE=true \
-    -e PUBLISHER_EXCHANGE=amq.topic \
-    -e SUBSCRIBER_QUEUE=cloud-event-dispatcher-queue \
-    ktwin/mqtt-dispatcher:0.1
-```
-
-Build Cloud Event Dispatcher:
 
 ```sh
 docker run -it --rm \
@@ -61,18 +44,35 @@ docker run -it --rm \
     -e PASSWORD=rabbitmq \
     -e DECLARE_EXCHANGE=true \
     -e DECLARE_QUEUE=true \
+    -e PUBLISHER_EXCHANGE=amq.topic \
+    -e SUBSCRIBER_QUEUE=cloud-event-dispatcher-queue \
+    open-digital-twin/mqtt-dispatcher:0.1
+```
+
+Build Cloud Event Dispatcher:
+
+```sh
+docker run -it --rm \
+    -e SERVICE_NAME=cloud-event-dispatcher-1 \
+    -e PROTOCOL=amqp \
+    -e SERVER_URL=localhost \
+    -e SERVER_PORT="5672" \
+    -e USERNAME=rabbitmq \
+    -e PASSWORD=rabbitmq \
+    -e DECLARE_EXCHANGE=true \
+    -e DECLARE_QUEUE=true \
     -e PUBLISHER_EXCHANGE=amq.headers \
     -e SUBSCRIBER_QUEUE=mqtt-dispatcher-queue \
-    ktwin/cloud-event-dispatcher:0.1
+    open-digital-twin/cloud-event-dispatcher:0.1
 ```
 
 ## Load in Kind Development Environment
 
 ```sh
-docker build -t dev.local/ktwin/mqtt-dispatcher:0.1 --build-arg SERVICE_NAME=mqtt-dispatcher .
-docker build -t dev.local/ktwin/cloud-event-dispatcher:0.1 --build-arg SERVICE_NAME=cloud-event-dispatcher .
-kind load docker-image dev.local/ktwin/mqtt-dispatcher:0.1
-kind load docker-image dev.local/ktwin/cloud-event-dispatcher:0.1
+docker build -t dev.local/open-digital-twin/mqtt-dispatcher:0.1 --build-arg SERVICE_NAME=mqtt-dispatcher .
+docker build -t dev.local/open-digital-twin/cloud-event-dispatcher:0.1 --build-arg SERVICE_NAME=cloud-event-dispatcher .
+kind load docker-image dev.local/open-digital-twin/mqtt-dispatcher:0.1
+kind load docker-image dev.local/open-digital-twin/cloud-event-dispatcher:0.1
 ```
 
 ## References

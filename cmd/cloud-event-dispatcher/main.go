@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	amqp "github.com/agwermann/ktwin-dispatcher/pkg/amqp"
-	"github.com/agwermann/ktwin-dispatcher/pkg/config"
+	amqp "github.com/Open-Digital-Twin/ktwin-dispatchers/pkg/amqp"
+	"github.com/Open-Digital-Twin/ktwin-dispatchers/pkg/config"
 )
 
 func main() {

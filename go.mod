@@ -1,4 +1,4 @@
-module github.com/agwermann/ktwin-dispatcher
+module github.com/Open-Digital-Twin/ktwin-dispatchers
 
 go 1.20
 

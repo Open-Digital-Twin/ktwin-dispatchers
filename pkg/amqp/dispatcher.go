@@ -3,7 +3,7 @@ package amqp
 import (
 	"fmt"
 
-	"github.com/agwermann/ktwin-dispatcher/pkg/config"
+	"github.com/Open-Digital-Twin/ktwin-dispatchers/pkg/config"
 )
 
 type Dispatcher interface {

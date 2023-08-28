@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	amqp "github.com/agwermann/ktwin-dispatcher/pkg/amqp"
-	"github.com/agwermann/ktwin-dispatcher/pkg/config"
+	amqp "github.com/Open-Digital-Twin/ktwin-dispatchers/pkg/amqp"
+	"github.com/Open-Digital-Twin/ktwin-dispatchers/pkg/config"
 	cloudEvents "github.com/cloudevents/sdk-go/v2"
 	"github.com/google/uuid"
 )
