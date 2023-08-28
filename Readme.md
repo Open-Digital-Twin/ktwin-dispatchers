@@ -11,23 +11,23 @@ The Cloud Event Dispatcher is responsible to forward Cloud Event messages from V
 Build MQTT Dispatcher:
 
 ```sh
-docker build -t ghcr.io/open-digital-twin/mqtt-dispatcher:0.1 --build-arg SERVICE_NAME=mqtt-dispatcher .
+docker build -t ghcr.io/open-digital-twin/ktwin-mqtt-dispatcher:0.1 --build-arg SERVICE_NAME=mqtt-dispatcher .
 ```
 
 Build Cloud Event Dispatcher:
 
 ```sh
-docker build -t ghcr.io/open-digital-twin/cloud-event-dispatcher:0.1 --build-arg SERVICE_NAME=cloud-event-dispatcher .
+docker build -t ghcr.io/open-digital-twin/ktwin-cloud-event-dispatcher:0.1 --build-arg SERVICE_NAME=cloud-event-dispatcher .
 ```
 
 ## Container Push
 
 ```sh
-docker push ghcr.io/open-digital-twin/mqtt-dispatcher:0.1
+docker push ghcr.io/open-digital-twin/ktwin-mqtt-dispatcher:0.1
 ```
 
 ```sh
-docker push ghcr.io/open-digital-twin/cloud-event-dispatcher:0.1
+docker push ghcr.io/open-digital-twin/ktwin-cloud-event-dispatcher:0.1
 ```
 
 ## Run
@@ -46,7 +46,7 @@ docker run -it --rm \
     -e DECLARE_QUEUE=true \
     -e PUBLISHER_EXCHANGE=amq.topic \
     -e SUBSCRIBER_QUEUE=cloud-event-dispatcher-queue \
-    open-digital-twin/mqtt-dispatcher:0.1
+    open-digital-twin/ktwin-mqtt-dispatcher:0.1
 ```
 
 Build Cloud Event Dispatcher:
@@ -63,16 +63,16 @@ docker run -it --rm \
     -e DECLARE_QUEUE=true \
     -e PUBLISHER_EXCHANGE=amq.headers \
     -e SUBSCRIBER_QUEUE=mqtt-dispatcher-queue \
-    open-digital-twin/cloud-event-dispatcher:0.1
+    open-digital-twin/ktwin-cloud-event-dispatcher:0.1
 ```
 
 ## Load in Kind Development Environment
 
 ```sh
-docker build -t dev.local/open-digital-twin/mqtt-dispatcher:0.1 --build-arg SERVICE_NAME=mqtt-dispatcher .
-docker build -t dev.local/open-digital-twin/cloud-event-dispatcher:0.1 --build-arg SERVICE_NAME=cloud-event-dispatcher .
-kind load docker-image dev.local/open-digital-twin/mqtt-dispatcher:0.1
-kind load docker-image dev.local/open-digital-twin/cloud-event-dispatcher:0.1
+docker build -t dev.local/open-digital-twin/ktwin-mqtt-dispatcher:0.1 --build-arg SERVICE_NAME=mqtt-dispatcher .
+docker build -t dev.local/open-digital-twin/ktwin-cloud-event-dispatcher:0.1 --build-arg SERVICE_NAME=cloud-event-dispatcher .
+kind load docker-image dev.local/open-digital-twin/ktwin-mqtt-dispatcher:0.1
+kind load docker-image dev.local/open-digital-twin/ktwin-cloud-event-dispatcher:0.1
 ```
 
 ## References
