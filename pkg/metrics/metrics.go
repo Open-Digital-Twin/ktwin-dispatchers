@@ -70,7 +70,7 @@ func (m *metricsServer) ObserveRequestDuration(eventType string, responseCode in
 
 	if m.latencyHistogram[eventType] == nil {
 		m.latencyHistogram[eventType] = prometheus.NewHistogram(prometheus.HistogramOpts{
-			Name:    "rabbitmq_ingress_event_dispatch_latencies_bucket",
+			Name:    "rabbitmq_mqtt_ingress_event_dispatch_latencies_bucket",
 			Help:    "The time spent dispatching an event to a Channel.",
 			Buckets: []float64{1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000},
 			ConstLabels: prometheus.Labels{
