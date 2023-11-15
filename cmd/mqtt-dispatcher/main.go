@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 	"time"
 
 	amqp "github.com/Open-Digital-Twin/ktwin-dispatchers/pkg/amqp"
 	"github.com/Open-Digital-Twin/ktwin-dispatchers/pkg/config"
+	"github.com/Open-Digital-Twin/ktwin-dispatchers/pkg/metrics"
 	cloudEvents "github.com/cloudevents/sdk-go/v2"
 	"github.com/google/uuid"
 )
@@ -43,6 +45,9 @@ func main() {
 		ExchangeType:      "headers",
 	}
 
+	metricsServer := metrics.NewMetricsServer()
+	go metricsServer.ServeMetrics()
+
 	dispatcher := amqp.NewDispatcher(dispatcherConfig)
 
 	err := dispatcher.Start()
@@ -57,6 +62,8 @@ func main() {
 	forever := make(chan bool)
 
 	dispatcher.Listen(func(params amqp.DispatcherCallbackParams) {
+		start := time.Now()
+
 		// Convert the routing key to type header used by Cloud Events header exchange
 		headers := make(map[string]interface{}, 10)
 
@@ -83,9 +90,17 @@ func main() {
 				Immediate: false,
 			})
 
+			duration := time.Since(start)
+
 			if err != nil {
 				fmt.Println(err)
+				metricsServer.IncrementEventCount(headerType, http.StatusInternalServerError)
+				metricsServer.ObserveRequestDuration(headerType, http.StatusInternalServerError, float64(duration.Milliseconds()))
+			} else {
+				metricsServer.IncrementEventCount(headerType, http.StatusAccepted)
+				metricsServer.ObserveRequestDuration(headerType, http.StatusAccepted, float64(duration.Milliseconds()))
 			}
+
 		} else {
 			fmt.Printf("Invalid routing key format %s, message will be dropped\n", params.RoutingKey)
 		}

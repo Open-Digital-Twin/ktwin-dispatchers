@@ -18,4 +18,7 @@ RUN CGO_ENABLED=0 go build -a -o service cmd/$SERVICE_NAME/main.go
 FROM gcr.io/distroless/static:nonroot
 WORKDIR /
 COPY --from=builder /workspace/service .
+
+EXPOSE 8080
+
 CMD ["./service"]
