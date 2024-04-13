@@ -126,8 +126,7 @@ func (d *dispatcher) Listen(callback DispatcherCallback) error {
 	})
 
 	if err != nil {
-		fmt.Println("Error when consuming from subscriber queue")
-		return err
+		panic("Error when consuming from subscriber queue")
 	}
 
 	return nil
