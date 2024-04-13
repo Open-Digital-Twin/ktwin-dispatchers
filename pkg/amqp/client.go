@@ -89,6 +89,7 @@ func (c *amqpClient) Consume(queue string, consumer string, options ConsumerClie
 
 	if err != nil {
 		log.Println(err)
+		return err
 	}
 
 	forever := make(chan bool)
