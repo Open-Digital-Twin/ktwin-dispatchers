@@ -61,7 +61,7 @@ func main() {
 
 	forever := make(chan bool)
 
-	dispatcher.Listen(func(params amqp.DispatcherCallbackParams) {
+	err = dispatcher.Listen(func(params amqp.DispatcherCallbackParams) {
 		start := time.Now()
 
 		// Convert the routing key to type header used by Cloud Events header exchange
@@ -106,6 +106,10 @@ func main() {
 		}
 
 	})
+
+	if err != nil {
+		panic("Error when consuming from subscriber queue")
+	}
 
 	<-forever
 

@@ -53,7 +53,7 @@ func main() {
 
 	forever := make(chan bool)
 
-	dispatcher.Listen(func(params amqp.DispatcherCallbackParams) {
+	err = dispatcher.Listen(func(params amqp.DispatcherCallbackParams) {
 		// Convert the `type` header to routing key sent to MQTT topic exchange
 		newRoutingKey, err := buildRoutingKeyWithHeaders(params.Headers)
 
@@ -76,6 +76,10 @@ func main() {
 		}
 
 	})
+
+	if err != nil {
+		panic("Error when consuming from subscriber queue")
+	}
 
 	<-forever
 
