@@ -73,7 +73,7 @@ func main() {
 			messageId := uuid.NewString()
 			headers["content-type"] = "application/json"
 			headers["id"] = messageId
-			headers["time"] = cloudEvents.Timestamp{Time: time.Now().UTC()}.String()
+			headers["time"] = cloudEvents.Timestamp{Time: time.Now().UTC()}.Format(time.RFC3339)
 			headers["specversion"] = "1.0"
 			headers["type"] = headerType
 			headers["source"] = headerSource
